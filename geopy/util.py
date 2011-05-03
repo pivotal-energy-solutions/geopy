@@ -1,16 +1,16 @@
 from sys import version_info
 import re
 import logging
-import htmlentitydefs
+import html.entities
 import xml.dom.minidom
 from xml.parsers.expat import ExpatError
 
 try:
     from decimal import Decimal
 except ImportError:
-    NUMBER_TYPES = (int, long, float)
+    NUMBER_TYPES = (int, int, float)
 else:
-    NUMBER_TYPES = (int, long, float, Decimal)
+    NUMBER_TYPES = (int, int, float, Decimal)
 
 class NullHandler(logging.Handler):
     def emit(self, record):
@@ -24,7 +24,7 @@ def pairwise(seq):
         yield (seq[i], seq[i + 1])
 
 def join_filter(sep, seq, pred=bool):
-    return sep.join([unicode(i) for i in seq if pred(i)])
+    return sep.join([str(i) for i in seq if pred(i)])
  
 def get_encoding(page, contents=None):
     # TODO: clean up Py3k support
@@ -47,12 +47,12 @@ def decode_page(page):
     encoding = get_encoding(page, contents) or 'iso-8859-1'
     # TODO: clean up Py3k support
     if version_info < (3, 0):
-        return unicode(contents, encoding=encoding).encode('utf-8')
+        return str(contents, encoding=encoding).encode('utf-8')
     else:
         return str(contents, encoding=encoding)
 
 def get_first_text(node, tag_names, strip=None):
-    if isinstance(tag_names, basestring):
+    if isinstance(tag_names, str):
             tag_names = [tag_names]
     if node:
         while tag_names:
@@ -62,9 +62,9 @@ def get_first_text(node, tag_names, strip=None):
                 return child and child.nodeValue.strip(strip)
 
 def join_filter(sep, seq, pred=bool):
-    return sep.join([unicode(i) for i in seq if pred(i)])
+    return sep.join([str(i) for i in seq if pred(i)])
 
-    import re, htmlentitydefs
+    import re, html.entities
 
 def unescape(text):
     """
@@ -77,15 +77,15 @@ def unescape(text):
             # character reference
             try:
                 if text[:3] == "&#x":
-                    return unichr(int(text[3:-1], 16))
+                    return chr(int(text[3:-1], 16))
                 else:
-                    return unichr(int(text[2:-1]))
+                    return chr(int(text[2:-1]))
             except ValueError:
                 pass
         else:
             # named entity
             try:
-                text = unichr(htmlentitydefs.name2codepoint[text[1:-1]])
+                text = chr(html.entities.name2codepoint[text[1:-1]])
             except KeyError:
                 pass
         return text # leave as is

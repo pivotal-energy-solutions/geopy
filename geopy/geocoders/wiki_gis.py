@@ -1,10 +1,11 @@
-from urllib import urlencode
-from urllib2 import urlopen
+from urllib.parse import urlencode
+from urllib.request import urlopen
 import xml
 from xml.parsers.expat import ExpatError
 
 from geopy.geocoders.base import Geocoder,GeocoderError,GeocoderResultError
 from geopy import Point, Location, util
+import collections
 
 class MediaWiki(Geocoder):
     def __init__(self, format_url, transform_string=None):
@@ -22,7 +23,7 @@ class MediaWiki(Geocoder):
         """
         self.format_url = format_url
 
-        if callable(transform_string):
+        if isinstance(transform_string, collections.Callable):
             self.transform_string = transform_string
 
     @classmethod

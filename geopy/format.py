@@ -1,9 +1,9 @@
 from geopy import units
 
 # Unicode characters for symbols that appear in coordinate strings.
-DEGREE = unichr(176)
-PRIME = unichr(8242)
-DOUBLE_PRIME = unichr(8243)
+DEGREE = chr(176)
+PRIME = chr(8242)
+DOUBLE_PRIME = chr(8243)
 ASCII_DEGREE = ''
 ASCII_PRIME = "'"
 ASCII_DOUBLE_PRIME = '"'
@@ -69,7 +69,7 @@ _DIRECTIONS = [
     ('southeast', 'SE'),
     ('southeast by south', 'SEbS'),
 ]
-DIRECTIONS, DIRECTIONS_ABBR = zip(*_DIRECTIONS)
+DIRECTIONS, DIRECTIONS_ABBR = list(zip(*_DIRECTIONS))
 ANGLE_DIRECTIONS = dict((n * 11.25, d) for n, d in enumerate(DIRECTIONS))
 ANGLE_DIRECTIONS_ABBR = dict((n * 11.25, d) for n, d in enumerate(DIRECTIONS_ABBR))
 

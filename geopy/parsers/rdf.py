@@ -21,7 +21,7 @@ class GeoVocabulary(Parser):
         self.point_class = point_class
     
     def find(self, document):
-        if isinstance(document, basestring):
+        if isinstance(document, str):
             document = ElementTree.fromstring(document)
         elif not ElementTree.iselement(document):
             document = ElementTree.parse(document)

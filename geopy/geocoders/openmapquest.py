@@ -6,8 +6,8 @@ except ImportError:
     except ImportError:
         from django.utils import simplejson as json
 
-from urllib import urlencode
-from urllib2 import urlopen
+from urllib.parse import urlencode
+from urllib.request import urlopen
 
 from geopy.geocoders.base import Geocoder
 from geopy.util import logger, decode_page, join_filter
@@ -40,7 +40,7 @@ class OpenMapQuest(Geocoder):
     
     def parse_json(self, page, exactly_one=True):
         """Parse display name, latitude, and longitude from an JSON response."""
-        if not isinstance(page, basestring):
+        if not isinstance(page, str):
             page = decode_page(page)
         resources = json.loads(page)
         

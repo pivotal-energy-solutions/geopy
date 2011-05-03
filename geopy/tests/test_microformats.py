@@ -137,14 +137,14 @@ def get_suite():
         geonotfound_test_methods.append('test_none_soup')
     
     tests = []
-    tests.extend(map(GeoMicroformatFoundTest,geofound_test_methods))
-    tests.extend(map(FindAbbrLatLongTest,geofound_test_methods))
-    tests.extend(map(FindAbbrShorthandTest,geofound_test_methods))
-    tests.extend(map(NoShorthandFoundTest,geofound_test_methods))
-    tests.extend(map(FindNestedDefListTest,geofound_test_methods))
+    tests.extend(list(map(GeoMicroformatFoundTest,geofound_test_methods)))
+    tests.extend(list(map(FindAbbrLatLongTest,geofound_test_methods)))
+    tests.extend(list(map(FindAbbrShorthandTest,geofound_test_methods)))
+    tests.extend(list(map(NoShorthandFoundTest,geofound_test_methods)))
+    tests.extend(list(map(FindNestedDefListTest,geofound_test_methods)))
     
-    tests.extend(map(GeoMicroformatNotFoundTest,geonotfound_test_methods))
-    tests.extend(map(NoShorthandNotFoundTest,geonotfound_test_methods))
+    tests.extend(list(map(GeoMicroformatNotFoundTest,geonotfound_test_methods)))
+    tests.extend(list(map(NoShorthandNotFoundTest,geonotfound_test_methods)))
     
     return unittest.TestSuite(tests)
 

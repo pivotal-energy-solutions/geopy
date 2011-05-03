@@ -118,7 +118,7 @@ class GeoMicroformat(Parser):
                     yield Location(name, (latitude, longitude))
     
     def _get_text(self, element, preformatted=False):
-        if isinstance(element, basestring):
+        if isinstance(element, str):
             if not preformatted:
                 return re.sub('\s+', ' ', element)
             else:

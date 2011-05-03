@@ -1,6 +1,6 @@
 import xml.dom.minidom
-from urllib import urlencode
-from urllib2 import urlopen
+from urllib.parse import urlencode
+from urllib.request import urlopen
 from geopy import util
 
 try:
@@ -42,7 +42,7 @@ class GeoNames(Geocoder):
         return self.parse_json(page, exactly_one)
     
     def parse_json(self, page, exactly_one):
-        if not isinstance(page, basestring):
+        if not isinstance(page, str):
             page = util.decode_page(page)
             
         doc = json.loads(page)
@@ -68,9 +68,7 @@ class GeoNames(Geocoder):
             state = place.get('adminCode1', None)
             country = place.get('countryCode', None)
             
-            location = ', '.join(filter(lambda x: bool(x),
-                [placename, state, country]
-            ))
+            location = ', '.join([x for x in [placename, state, country] if bool(x)])
             
             return (location, (latitude, longitude))
         

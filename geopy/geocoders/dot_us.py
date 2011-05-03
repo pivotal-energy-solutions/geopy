@@ -1,6 +1,6 @@
 import getpass
-from urllib import urlencode
-from urllib2 import urlopen
+from urllib.parse import urlencode
+from urllib.request import urlopen
 from geopy.geocoders.base import Geocoder
 from geopy import util
 import csv
@@ -57,9 +57,7 @@ class GeocoderDotUS(Geocoder):
     def _parse_result(result):
         # turn x=y pairs ("lat=47.6", "long=-117.426") into dict key/value pairs:
         place = dict(
-            filter(lambda x: len(x)>1, # strip off bits that aren't pairs (i.e. "geocoder modified" status string")
-            map(lambda x: x.split('=', 1), result) # split the key=val strings into (key, val) tuples
-        ))
+            [x for x in [x.split('=', 1) for x in result] if len(x)>1])
         
         address = [
             place.get('number', None),

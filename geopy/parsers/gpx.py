@@ -143,7 +143,7 @@ class GPX(object):
             self.open(document)
 
     def open(self, string_or_file):
-        if isinstance(string_or_file, basestring):
+        if isinstance(string_or_file, str):
             string_or_file = ElementTree.fromstring(string_or_file)
         elif not ElementTree.iselement(string_or_file):
             string_or_file = ElementTree.parse(string_or_file)
@@ -225,7 +225,7 @@ class GPX(object):
             yield Waypoint.from_xml_names(attrs, children)
 
     def get_route_by_name(self, route):
-        if isinstance(route, basestring):
+        if isinstance(route, str):
             name = route
             index = 0
         else:
@@ -254,11 +254,11 @@ class GPX(object):
         attr_types, child_types = type_def
         attrs = {}
         children = {}
-        for attr, handler in attr_types.iteritems():
+        for attr, handler in attr_types.items():
             value = element.get(attr)
             type_func = self.type_handlers[handler]
             attrs[attr] = type_func(_Attr(value))
-        for tag, handler in child_types.iteritems():
+        for tag, handler in child_types.items():
             values = []
             all = False
             if isinstance(handler, list):
@@ -281,7 +281,7 @@ class GPX(object):
 
     def _cache_parsed(self, tag, parse_func, cache):
         i = -1
-        for i in xrange(len(cache)):
+        for i in range(len(cache)):
             item = cache[i]
             if item is not None:
                 yield item

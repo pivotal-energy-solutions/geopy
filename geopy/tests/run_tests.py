@@ -18,7 +18,7 @@ def all_tests():
     ]
 
     if BeautifulSoup:
-        from test_microformats import get_suite as get_microformat_suite
+        from .test_microformats import get_suite as get_microformat_suite
         tests.append(get_microformat_suite())
 
     return unittest.TestSuite(tests)

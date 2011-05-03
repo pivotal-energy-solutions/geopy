@@ -66,8 +66,8 @@ def get_suite():
         'test_route_list',
     ]
     tests = []
-    tests.extend(map(GPXInitTestCase,test_methods))
-    tests.extend(map(GPXOpenerTestCase,test_methods))
+    tests.extend(list(map(GPXInitTestCase,test_methods)))
+    tests.extend(list(map(GPXOpenerTestCase,test_methods)))
 
     return unittest.TestSuite(tests)
 

@@ -179,7 +179,7 @@ class TestWhenComputingVincentyDistance(CommonDistanceCases):
 
     def test_should_get_distinct_results_for_different_ellipsoids(self):
         results = []
-        for ellipsoid_name in ELLIPSOIDS.keys():
+        for ellipsoid_name in list(ELLIPSOIDS.keys()):
             self.cls.ELLIPSOID = ELLIPSOIDS[ellipsoid_name]
             results.append(self.cls((0, 0), (0, 1)))
 

@@ -65,7 +65,7 @@ class Distance(object):
     def __abs__(self):
         return self.__class__(abs(self.kilometers))
     
-    def __nonzero__(self):
+    def __bool__(self):
         return bool(self.kilometers)
     
     def measure(self, a, b):
@@ -219,7 +219,7 @@ class VincentyDistance(Distance):
         lat1, lng1 = radians(degrees=a.latitude), radians(degrees=a.longitude)
         lat2, lng2 = radians(degrees=b.latitude), radians(degrees=b.longitude)
 
-        if isinstance(self.ELLIPSOID, basestring):
+        if isinstance(self.ELLIPSOID, str):
             major, minor, f = ELLIPSOIDS[self.ELLIPSOID]
         else:
             major, minor, f = self.ELLIPSOID
@@ -322,7 +322,7 @@ class VincentyDistance(Distance):
             distance = distance.kilometers
         
         ellipsoid = self.ELLIPSOID
-        if isinstance(ellipsoid, basestring):
+        if isinstance(ellipsoid, str):
             ellipsoid = ELLIPSOIDS[ellipsoid]
 
         major, minor, f = ellipsoid

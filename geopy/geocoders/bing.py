@@ -6,8 +6,8 @@ except ImportError:
     except ImportError:
         from django.utils import simplejson as json
 
-from urllib import urlencode
-from urllib2 import urlopen
+from urllib.parse import urlencode
+from urllib.request import urlopen
 
 from geopy.geocoders.base import Geocoder
 from geopy.util import logger, decode_page, join_filter
@@ -51,7 +51,7 @@ class Bing(Geocoder):
 
     def parse_json(self, page, exactly_one=True):
         """Parse a location name, latitude, and longitude from an JSON response."""
-        if not isinstance(page, basestring):
+        if not isinstance(page, str):
             page = decode_page(page)
         doc = json.loads(page)
         resources = doc['resourceSets'][0]['resources']

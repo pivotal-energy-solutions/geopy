@@ -1,7 +1,7 @@
 import xml.dom.minidom
 from geopy import util
-from urllib import urlencode
-from urllib2 import urlopen
+from urllib.parse import urlencode
+from urllib.request import urlopen
 from geopy.geocoders.base import Geocoder
 
 
@@ -29,7 +29,7 @@ class Yahoo(Geocoder):
         return self.parse_xml(page, exactly_one)
 
     def parse_xml(self, page, exactly_one=True):
-        if not isinstance(page, basestring):
+        if not isinstance(page, str):
             page = util.decode_page(page)
 
         doc = xml.dom.minidom.parseString(page)

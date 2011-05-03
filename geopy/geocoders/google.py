@@ -1,5 +1,5 @@
-from urllib import urlencode
-from urllib2 import urlopen
+from urllib.parse import urlencode
+from urllib.request import urlopen
 try:
     import json
 except ImportError:
@@ -90,7 +90,7 @@ class Google(Geocoder):
     def parse_xml(self, page, exactly_one=True):
         """Parse a location name, latitude, and longitude from an XML response.
         """
-        if not isinstance(page, basestring):
+        if not isinstance(page, str):
             page = util.decode_page(page)
         try:
             doc = xml.dom.minidom.parseString(page)
@@ -128,7 +128,7 @@ class Google(Geocoder):
             return [parse_place(place) for place in places]
 
     def parse_json(self, page, exactly_one=True):
-        if not isinstance(page, basestring):
+        if not isinstance(page, str):
             page = util.decode_page(page)
         doc = json.loads(page)
         places = doc.get('Placemark', [])
