@@ -1,3 +1,4 @@
+import os
 import unittest
 from urllib2 import URLError
 
@@ -8,7 +9,7 @@ socket.setdefaulttimeout(3.0)
 
 def _basic_address_test(self):
     address = '999 W. Riverside Ave., Spokane, WA 99201'
-    
+
     try:
         clean_address, latlon = self.geocoder.geocode(address)
     except URLError, e:
@@ -16,13 +17,13 @@ def _basic_address_test(self):
             raise unittest.SkipTest('geocoder service timed out')
         else:
             raise
-    
+
     self.assertAlmostEqual(latlon[0], 47.658, delta=.002)
     self.assertAlmostEqual(latlon[1], -117.426, delta=.002)
-    
+
 def _partial_address_test(self):
     address = '435 north michigan, chicago 60611'
-    
+
     try:
         clean_address, latlon = self.geocoder.geocode(address)
     except URLError, e:
@@ -30,13 +31,13 @@ def _partial_address_test(self):
             raise unittest.SkipTest('geocoder service timed out')
         else:
             raise
-    
+
     self.assertAlmostEqual(latlon[0], 41.890, delta=.002)
     self.assertAlmostEqual(latlon[1], -87.624, delta=.002)
 
 def _intersection_test(self):
     address = 'e. 161st st & river ave, new york, ny'
-    
+
     try:
         clean_address, latlon = self.geocoder.geocode(address)
     except URLError, e:
@@ -44,13 +45,13 @@ def _intersection_test(self):
             raise unittest.SkipTest('geocoder service timed out')
         else:
             raise
-    
+
     self.assertAlmostEqual(latlon[0], 40.828, delta=.002)
     self.assertAlmostEqual(latlon[1], -73.926, delta=.002)
 
 def _placename_test(self):
     address = 'Mount St. Helens'
-    
+
     try:
         # Since a place name search is significantly less accurate,
         # allow multiple results to come in. We'll check the top one.
@@ -60,14 +61,14 @@ def _placename_test(self):
             raise unittest.SkipTest('geocoder service timed out')
         else:
             raise
-    
+
     place = places[0]
     clean_address, latlon = place
-    
+
     # And since this is a pretty fuzzy search, we'll only test to .01
     self.assertAlmostEqual(latlon[0], 46.1912, delta=.01)
     self.assertAlmostEqual(latlon[1], -122.1944, delta=.01)
-    
+
 # ==========
 # Define the test cases that actually perform the import and instantiation step
 
@@ -84,7 +85,8 @@ class GoogleV3TestCase(unittest.TestCase):
 class BingTestCase(unittest.TestCase):
     def setUp(self):
         from geopy.geocoders.bing import Bing
-        self.geocoder = Bing('Ao8kAepVCp_mQ583XgHg-rga2dwneQ4LtivmtuDj307vGjteiiqfI6ggjmx63wYR')
+        key = os.environ.get('BING_API_KEY', 'Ao8kAepVCp_mQ583XgHg-rga2dwneQ4LtivmtuDj307vGjteiiqfI6ggjmx63wYR')
+        self.geocoder = Bing(key)
 
 class YahooTestCase(unittest.TestCase):
     def setUp(self):
