@@ -41,7 +41,23 @@ class Yahoo(Geocoder):
     def geocode_url(self, url, exactly_one=True):
         page = urlopen(url)
         return self.parse_json(page, exactly_one)
-    
+
+    @staticmethod
+    def _parse_result(place):
+        line1, line2, line3, line4 = place.get('line1'), place.get('line2'), place.get('line3'), place.get('line4')
+        address = util.join_filter(", ", [line1, line2, line3, line4])
+        city = place.get('city')
+        state = place.get('state')
+        country = place.get('country')
+        location = util.join_filter(", ", [address, city, country])
+        lat, lng = place.get('latitude'), place.get('longitude')
+        #if lat and lng:
+        #    point = Point(floatlat, lng)
+        #else:
+        #    point = None
+        return (location, (float(lat), float(lng)))
+
+
     def parse_json(self, page, exactly_one=True):
         if not isinstance(page, basestring):
             page = util.decode_page(page)
@@ -54,24 +70,10 @@ class Yahoo(Geocoder):
             raise ValueError("Didn't find exactly one placemark! " \
                              "(Found %d.)" % len(results))
 
-        def parse_result(place):
-            line1, line2, line3, line4 = place.get('line1'), place.get('line2'), place.get('line3'), place.get('line4')
-            address = util.join_filter(", ", [line1, line2, line3, line4])
-            city = place.get('city')
-            state = place.get('state')
-            country = place.get('country')
-            location = util.join_filter(", ", [address, city, country])
-            lat, lng = place.get('latitude'), place.get('longitude')
-            #if lat and lng:
-            #    point = Point(floatlat, lng)
-            #else:
-            #    point = None
-            return (location, (float(lat), float(lng)))
-    
         if exactly_one:
-            return parse_result(results[0])
+            return self._parse_result(results[0])
         else:
-            return [parse_result(result) for result in results]
+            return [self._parse_result(result) for result in results]
 
     def reverse(self, coord, exactly_one=True):
         (lat, lng) = coord

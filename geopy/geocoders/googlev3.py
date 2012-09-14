@@ -162,6 +162,14 @@ class GoogleV3(Geocoder):
 
         return self.geocode_url(url, exactly_one)
 
+    @staticmethod
+    def _parse_result(place):
+        '''Get the location, lat, lng from a single json place.'''
+        location = place.get('formatted_address')
+        latitude = place['geometry']['location']['lat']
+        longitude = place['geometry']['location']['lng']
+        return (location, (latitude, longitude))
+
     def parse_json(self, page, exactly_one=True):
         '''Returns location, (latitude, longitude) from json feed.'''
         if not isinstance(page, basestring):
@@ -175,18 +183,11 @@ class GoogleV3(Geocoder):
         elif exactly_one and len(places) != 1:
             raise ValueError(
                 "Didn't find exactly one placemark! (Found %d)" % len(places))
-    
-        def parse_place(place):
-            '''Get the location, lat, lng from a single json place.'''
-            location = place.get('formatted_address')
-            latitude = place['geometry']['location']['lat']
-            longitude = place['geometry']['location']['lng']
-            return (location, (latitude, longitude))
-        
+
         if exactly_one:
-            return parse_place(places[0])
+            return self._parse_result(places[0])
         else:
-            return [parse_place(place) for place in places]
+            return [self._parse_result(place) for place in places]
 
 def check_status(status):
     '''Validates error statuses.'''

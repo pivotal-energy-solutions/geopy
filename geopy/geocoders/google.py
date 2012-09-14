@@ -87,6 +87,18 @@ class Google(Geocoder):
         dispatch = getattr(self, 'parse_' + self.output_format)
         return dispatch(page, exactly_one)
 
+    @staticmethod
+    def _parse_result(place):
+        location = util.get_first_text(place, ['address', 'name']) or None
+        points = place.getElementsByTagName('Point')
+        point = points and points[0] or None
+        coords = util.get_first_text(point, 'coordinates') or None
+        if coords:
+            longitude, latitude = [float(f) for f in coords.split(',')[:2]]
+        else:
+            latitude = longitude = None
+        return (location, (latitude, longitude))
+
     def parse_xml(self, page, exactly_one=True):
         """Parse a location name, latitude, and longitude from an XML response.
         """
@@ -109,23 +121,11 @@ class Google(Geocoder):
         if exactly_one and len(places) != 1:
             raise ValueError("Didn't find exactly one placemark! " \
                              "(Found %d.)" % len(places))
-        
-        def parse_place(place):
-            location = util.get_first_text(place, ['address', 'name']) or None
-            points = place.getElementsByTagName('Point')
-            point = points and points[0] or None
-            coords = util.get_first_text(point, 'coordinates') or None
-            if coords:
-                longitude, latitude = [float(f) for f in coords.split(',')[:2]]
-            else:
-                latitude = longitude = None
-                _, (latitude, longitude) = self.geocode(location)
-            return (location, (latitude, longitude))
-        
+
         if exactly_one:
-            return parse_place(places[0])
+            return self._parse_result(places[0])
         else:
-            return [parse_place(place) for place in places]
+            return [self._parse_result(place) for place in places]
 
     def parse_json(self, page, exactly_one=True):
         if not isinstance(page, basestring):
@@ -143,15 +143,10 @@ class Google(Geocoder):
             raise ValueError("Didn't find exactly one placemark! " \
                              "(Found %d.)" % len(places))
 
-        def parse_place(place):
-            location = place.get('address')
-            longitude, latitude = place['Point']['coordinates'][:2]
-            return (location, (latitude, longitude))
-        
         if exactly_one:
-            return parse_place(places[0])
+            return self._parse_result(places[0])
         else:
-            return [parse_place(place) for place in places]
+            return [self._parse_result(place) for place in places]
 
     def check_status_code(self,status_code):
         if status_code == 400:

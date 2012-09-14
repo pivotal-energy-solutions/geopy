@@ -38,10 +38,10 @@ class MediaWiki(Geocoder):
     def geocode_url(self, url):
         util.logger.debug("Fetching %s..." % url)
         page = urlopen(url)
-        name, (latitude, longitude) = self.parse_xhtml(page)
-        return (name, (latitude, longitude))        
+        return self._parse_result(page)
 
-    def parse_xhtml(self, page):
+    @staticmethod
+    def _parse_result(page):
         soup = isinstance(page, BeautifulSoup) and page or BeautifulSoup(page)
 
         meta = soup.head.find('meta', {'name': 'geo.placename'})

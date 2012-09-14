@@ -40,7 +40,28 @@ class GeoNames(Geocoder):
     def geocode_url(self, url, exactly_one=True):
         page = urlopen(url)
         return self.parse_json(page, exactly_one)
-    
+
+    @staticmethod
+    def _parse_result(place):
+        latitude = place.get('lat', None)
+        longitude = place.get('lng', None)
+        if latitude and longitude:
+            latitude = float(latitude)
+            longitude = float(longitude)
+        else:
+            return None
+
+        placename = place.get('name')
+        state = place.get('adminCode1', None)
+        country = place.get('countryCode', None)
+
+        location = ', '.join(filter(lambda x: bool(x),
+            [placename, state, country]
+        ))
+
+        return (location, (latitude, longitude))
+
+
     def parse_json(self, page, exactly_one):
         if not isinstance(page, basestring):
             page = util.decode_page(page)
@@ -54,27 +75,8 @@ class GeoNames(Geocoder):
         if exactly_one and len(places) != 1:
             raise ValueError("Didn't find exactly one code! " \
                              "(Found %d.)" % len(places))
-        
-        def parse_code(place):
-            latitude = place.get('lat', None)
-            longitude = place.get('lng', None)
-            if latitude and longitude:
-                latitude = float(latitude)
-                longitude = float(longitude)
-            else:
-                return None
-            
-            placename = place.get('name')
-            state = place.get('adminCode1', None)
-            country = place.get('countryCode', None)
-            
-            location = ', '.join(filter(lambda x: bool(x),
-                [placename, state, country]
-            ))
-            
-            return (location, (latitude, longitude))
-        
+
         if exactly_one:
-            return parse_code(places[0])
+            return self._parse_result(places[0])
         else:
-            return [parse_code(place) for place in places]
+            return [self._parse_result(place) for place in places]

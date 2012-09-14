@@ -49,6 +49,29 @@ class Bing(Geocoder):
 
         return self.parse_json(page, exactly_one)
 
+    @staticmethod
+    def _parse_result(resource):
+        stripchars = ", \n"
+        a = resource['address']
+
+        address = a.get('addressLine', '').strip(stripchars)
+        city = a.get('locality', '').strip(stripchars)
+        state = a.get('adminDistrict', '').strip(stripchars)
+        zipcode = a.get('postalCode', '').strip(stripchars)
+        country = a.get('countryRegion', '').strip(stripchars)
+
+        city_state = join_filter(", ", [city, state])
+        place = join_filter(" ", [city_state, zipcode])
+        location = join_filter(", ", [address, place, country])
+
+        latitude = resource['point']['coordinates'][0] or None
+        longitude = resource['point']['coordinates'][1] or None
+        if latitude and longitude:
+            latitude = float(latitude)
+            longitude = float(longitude)
+
+        return (location, (latitude, longitude))
+
     def parse_json(self, page, exactly_one=True):
         """Parse a location name, latitude, and longitude from an JSON response."""
         if not isinstance(page, basestring):
@@ -60,29 +83,7 @@ class Bing(Geocoder):
             raise ValueError("Didn't find exactly one resource! " \
                              "(Found %d.)" % len(resources))
 
-        def parse_resource(resource):
-            stripchars = ", \n"
-            a = resource['address']
-            
-            address = a.get('addressLine', '').strip(stripchars)
-            city = a.get('locality', '').strip(stripchars)
-            state = a.get('adminDistrict', '').strip(stripchars)
-            zipcode = a.get('postalCode', '').strip(stripchars)
-            country = a.get('countryRegion', '').strip(stripchars)
-            
-            city_state = join_filter(", ", [city, state])
-            place = join_filter(" ", [city_state, zipcode])
-            location = join_filter(", ", [address, place, country])
-            
-            latitude = resource['point']['coordinates'][0] or None
-            longitude = resource['point']['coordinates'][1] or None
-            if latitude and longitude:
-                latitude = float(latitude)
-                longitude = float(longitude)
-            
-            return (location, (latitude, longitude))
-
         if exactly_one:
-            return parse_resource(resources[0])
+            return self._parse_result(resources[0])
         else:
-            return [parse_resource(resource) for resource in resources]
+            return [self._parse_result(resource) for resource in resources]
