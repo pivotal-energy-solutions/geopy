@@ -13,7 +13,7 @@ def _basic_address_test(self):
     try:
         clean_address, latlon = self.geocoder.geocode(address)
     except URLError, e:
-        if "timed out" in str(e).lower():
+        if "Bummer.. timed out" in str(e).lower():
             raise unittest.SkipTest('geocoder service timed out')
         else:
             raise
