@@ -34,12 +34,14 @@ class Bing(Geocoder):
         
         self.api_key = api_key
         self.format_string = format_string
+        self.include_neighborhood = False
         self.url = "http://dev.virtualearth.net/REST/v1/Locations?%s"
 
     def geocode(self, string, exactly_one=True):
         params = {'query': self.format_string % string,
                   'key': self.api_key
                   }
+        if self.include_neighborhood: params['inclnb'] = 1
         url = self.url % urlencode(params)
         return self.geocode_url(url, exactly_one)
 
