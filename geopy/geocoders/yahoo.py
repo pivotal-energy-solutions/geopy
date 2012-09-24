@@ -42,8 +42,8 @@ class Yahoo(Geocoder):
         page = urlopen(url)
         return self.parse_json(page, exactly_one)
 
-    @staticmethod
-    def _parse_result(place):
+    @classmethod
+    def _parse_result(cls, place):
         line1, line2, line3, line4 = place.get('line1'), place.get('line2'), place.get('line3'), place.get('line4')
         address = util.join_filter(", ", [line1, line2, line3, line4])
         city = place.get('city')

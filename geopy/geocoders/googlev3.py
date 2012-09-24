@@ -162,8 +162,8 @@ class GoogleV3(Geocoder):
 
         return self.geocode_url(url, exactly_one)
 
-    @staticmethod
-    def _parse_result(place):
+    @classmethod
+    def _parse_result(cls, place):
         '''Get the location, lat, lng from a single json place.'''
         location = place.get('formatted_address')
         latitude = place['geometry']['location']['lat']

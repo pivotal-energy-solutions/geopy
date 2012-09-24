@@ -38,8 +38,8 @@ class OpenMapQuest(Geocoder):
 
         return self.parse_json(page, exactly_one)
 
-    @staticmethod
-    def _parse_result(resource):
+    @classmethod
+    def _parse_result(cls, resource):
         location = resource['display_name']
 
         latitude = resource['lat'] or None
@@ -58,12 +58,10 @@ class OpenMapQuest(Geocoder):
         resources = json.loads(page)
 
         if exactly_one and len(resources) != 1:
-            from warnings import warn
-            warn("Didn't find exactly one resource!" + \
-                "(Found %d.), use exactly_one=False\n" % len(resources)
-            )
+            raise ValueError(
+                "Didn't find exactly one placemark! (Found %d)" % len(resources))
 
-        if exactly_one:
+        if exactly_one and len(resources) == 1:
             return self._parse_result(resources[0])
         else:
             return [self._parse_result(resource) for resource in resources]

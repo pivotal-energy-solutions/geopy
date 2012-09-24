@@ -41,8 +41,8 @@ class GeoNames(Geocoder):
         page = urlopen(url)
         return self.parse_json(page, exactly_one)
 
-    @staticmethod
-    def _parse_result(place):
+    @classmethod
+    def _parse_result(cls, place):
         latitude = place.get('lat', None)
         longitude = place.get('lng', None)
         if latitude and longitude:

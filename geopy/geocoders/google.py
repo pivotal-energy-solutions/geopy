@@ -87,8 +87,8 @@ class Google(Geocoder):
         dispatch = getattr(self, 'parse_' + self.output_format)
         return dispatch(page, exactly_one)
 
-    @staticmethod
-    def _parse_result(place):
+    @classmethod
+    def _parse_result(cls, place):
         location = util.get_first_text(place, ['address', 'name']) or None
         points = place.getElementsByTagName('Point')
         point = points and points[0] or None

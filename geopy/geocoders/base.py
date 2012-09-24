@@ -8,8 +8,8 @@ class Geocoder(object):
     def reverse(self, point):
         raise NotImplementedError
 
-    @staticmethod
-    def _parse_result(resource):
+    @classmethod
+    def _parse_result(cls, resource):
         """This is what to overide to get a format that you want."""
         raise NotImplementedError
 

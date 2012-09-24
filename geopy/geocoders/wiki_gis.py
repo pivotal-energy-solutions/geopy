@@ -40,8 +40,8 @@ class MediaWiki(Geocoder):
         page = urlopen(url)
         return self._parse_result(page)
 
-    @staticmethod
-    def _parse_result(page):
+    @classmethod
+    def _parse_result(cls, page):
         soup = isinstance(page, BeautifulSoup) and page or BeautifulSoup(page)
 
         meta = soup.head.find('meta', {'name': 'geo.placename'})

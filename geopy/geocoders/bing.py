@@ -51,8 +51,8 @@ class Bing(Geocoder):
 
         return self.parse_json(page, exactly_one)
 
-    @staticmethod
-    def _parse_result(resource):
+    @classmethod
+    def _parse_result(cls, resource):
         stripchars = ", \n"
         a = resource['address']
 
