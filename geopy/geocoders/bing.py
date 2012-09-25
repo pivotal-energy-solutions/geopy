@@ -37,13 +37,17 @@ class Bing(Geocoder):
         self.include_neighborhood = False
         self.url = "http://dev.virtualearth.net/REST/v1/Locations?%s"
 
-    def geocode(self, string, exactly_one=True):
-        params = {'query': self.format_string % string,
+    def geocode(self, string, exactly_one=True, region=None, include_neighborhood=False):
+
+        self.search_string = string
+        params = {'query': self.format_string % self.search_string,
                   'key': self.api_key
                   }
-        if self.include_neighborhood: params['inclnb'] = 1
-        url = self.url % urlencode(params)
-        return self.geocode_url(url, exactly_one)
+        if region:
+            params['countryRegion'] = region
+        if include_neighborhood: params['inclnb'] = 1
+        self.url = self.url % urlencode(params)
+        return self.geocode_url(self.url, exactly_one)
 
     def geocode_url(self, url, exactly_one=True):
         logger.debug("Fetching %s..." % url)
@@ -51,8 +55,7 @@ class Bing(Geocoder):
 
         return self.parse_json(page, exactly_one)
 
-    @classmethod
-    def _parse_result(cls, resource):
+    def _parse_result(self, resource):
         stripchars = ", \n"
         a = resource['address']
 

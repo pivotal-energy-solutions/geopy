@@ -53,8 +53,7 @@ class GeocoderDotUS(Geocoder):
         
         return self._parse_result(places[0])
     
-    @classmethod
-    def _parse_result(cls, result):
+    def _parse_result(self, result):
         # turn x=y pairs ("lat=47.6", "long=-117.426") into dict key/value pairs:
         place = dict(
             filter(lambda x: len(x)>1, # strip off bits that aren't pairs (i.e. "geocoder modified" status string")

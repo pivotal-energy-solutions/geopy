@@ -56,6 +56,7 @@ class GoogleV3(Geocoder):
         self.domain = domain.strip('/')
         self.protocol = protocol
         self.doc = {}
+        self.url = None
 
         if client_id and secret_key:
             self.client_id = client_id
@@ -90,8 +91,8 @@ class GoogleV3(Geocoder):
 
         return self.parse_json(page, exactly_one)
 
-    def geocode(self, address, bounds=None, region=None,
-                language=None, sensor=False, exactly_one=True):
+    def geocode(self, address, bounds=None, region=None, language=None, components=None,
+                sensor=False, exactly_one=True):
         '''Geocode an address.
 
         ``address`` (required) The address that you want to geocode.
@@ -108,13 +109,18 @@ class GoogleV3(Geocoder):
         not supplied, the geocoder will attempt to use the native language of
         the domain from which the request is sent wherever possible.
 
+        ``compoents`` (optional) The list of components for filtering. The Google
+        Geocoding API can return address results restricted to a specific area.
+        The restriction is specified using the components filter. A filter
+        consists of a list of component:value pairs separated by a pipe (|)
+
         ``sensor`` (required) Indicates whether or not the geocoding request
         comes from a device with a location sensor.
         This value must be either True or False.
         '''
-
+        self.search_string = address
         params = {
-            'address': self.format_string % address,
+            'address': self.format_string % self.search_string,
             'sensor': str(sensor).lower()
         }
 
@@ -124,13 +130,15 @@ class GoogleV3(Geocoder):
             params['region'] = region
         if language:
             params['language'] = language
+        if components:
+            params['components'] = components
 
         if not self.premier:
-            url = self.get_url(params)
+            self.url = self.get_url(params)
         else:
-            url = self.get_signed_url(params)
+            self.url = self.get_signed_url(params)
 
-        return self.geocode_url(url, exactly_one)
+        return self.geocode_url(self.url, exactly_one)
 
     def reverse(self, point, language=None, sensor=False, exactly_one=False):
         '''Reverse geocode a point.
@@ -156,14 +164,13 @@ class GoogleV3(Geocoder):
             params['language'] = language
 
         if not self.premier:
-            url = self.get_url(params)
+            self.url = self.get_url(params)
         else:
-            url = self.get_signed_url(params)
+            self.url = self.get_signed_url(params)
 
-        return self.geocode_url(url, exactly_one)
+        return self.geocode_url(self.url, exactly_one)
 
-    @classmethod
-    def _parse_result(cls, place):
+    def _parse_result(self, place):
         '''Get the location, lat, lng from a single json place.'''
         location = place.get('formatted_address')
         latitude = place['geometry']['location']['lat']

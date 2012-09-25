@@ -30,16 +30,20 @@ class OpenMapQuest(Geocoder):
         self.url = "http://open.mapquestapi.com/nominatim/v1/search?format=json&%s"
 
     def geocode(self, string, exactly_one=True):
-        params = {'q': self.format_string % string}
-        url = self.url % urlencode(params)
 
-        logger.debug("Fetching %s..." % url)
-        page = urlopen(url)
+        self.search_string = string
+        params = {
+            'q': self.format_string % self.search_string,
+            'addressdetails': 1
+
+        }
+        self.url = self.url % urlencode(params)
+        logger.debug("Fetching %s..." % self.url)
+        page = urlopen(self.url)
 
         return self.parse_json(page, exactly_one)
 
-    @classmethod
-    def _parse_result(cls, resource):
+    def _parse_result(self, resource):
         location = resource['display_name']
 
         latitude = resource['lat'] or None

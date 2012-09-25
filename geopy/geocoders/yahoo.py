@@ -30,20 +30,22 @@ class Yahoo(Geocoder):
                  'and now ignored. JSON will be used internally.', DeprecationWarning)
 
     def geocode(self, string, exactly_one=True):
-        params = {'location': self.format_string % string,
+
+        self.search_string = string
+        params = {'location': self.format_string % self.search_string,
                   'appid': self.app_id,
                   'flags': 'J'
                  }
         url = self.BASE_URL % urlencode(params)
-        util.logger.debug("Fetching %s..." % url)
+        self.url = url
+        util.logger.debug("Fetching %s..." % self.url)
         return self.geocode_url(url, exactly_one)
 
     def geocode_url(self, url, exactly_one=True):
         page = urlopen(url)
         return self.parse_json(page, exactly_one)
 
-    @classmethod
-    def _parse_result(cls, place):
+    def _parse_result(self, place):
         line1, line2, line3, line4 = place.get('line1'), place.get('line2'), place.get('line3'), place.get('line4')
         address = util.join_filter(", ", [line1, line2, line3, line4])
         city = place.get('city')
