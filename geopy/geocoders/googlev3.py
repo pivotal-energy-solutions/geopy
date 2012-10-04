@@ -11,6 +11,7 @@ import hashlib
 import hmac
 from urllib import urlencode
 from urllib2 import urlopen
+import sys
 
 try:
     import json
@@ -84,15 +85,18 @@ class GoogleV3(Geocoder):
         return 'http://%(domain)s/maps/api/geocode/json?%(params)s' % (
             {'domain': self.domain, 'params': urlencode(params)})
     
-    def geocode_url(self, url, exactly_one=True):
+    def geocode_url(self, url, exactly_one=True, timeout=None):
         '''Fetches the url and returns the result.'''
         util.logger.debug("Fetching %s..." % url)
-        page = urlopen(url)
+
+        kwargs = dict(url=url)
+        if timeout and sys.version_info > (2,6,0): kwargs['timeout'] = timeout
+        page = urlopen(**kwargs)
 
         return self.parse_json(page, exactly_one)
 
     def geocode(self, address, bounds=None, region=None, language=None, components=None,
-                sensor=False, exactly_one=True):
+                sensor=False, exactly_one=True, timeout=None):
         '''Geocode an address.
 
         ``address`` (required) The address that you want to geocode.
@@ -138,7 +142,7 @@ class GoogleV3(Geocoder):
         else:
             self.url = self.get_signed_url(params)
 
-        return self.geocode_url(self.url, exactly_one)
+        return self.geocode_url(self.url, exactly_one, timeout=timeout)
 
     def reverse(self, point, language=None, sensor=False, exactly_one=False):
         '''Reverse geocode a point.

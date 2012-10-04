@@ -1,5 +1,7 @@
 from urllib import urlencode
 from urllib2 import urlopen
+import sys
+
 try:
     import json
 except ImportError:
@@ -69,7 +71,7 @@ class Google(Geocoder):
         domain = self.domain.strip('/')
         return "http://%s/maps/geo?%%s" % domain
 
-    def geocode(self, string, exactly_one=True):
+    def geocode(self, string, exactly_one=True, timeout=None):
         params = {'q': self.format_string % string,
                   'output': self.output_format.lower(),
                   }
@@ -78,12 +80,15 @@ class Google(Geocoder):
             params['key'] = self.api_key
         
         url = self.url % urlencode(params)
-        return self.geocode_url(url, exactly_one)
+        return self.geocode_url(url, exactly_one, timeout=timeout)
 
-    def geocode_url(self, url, exactly_one=True):
+    def geocode_url(self, url, exactly_one=True, timeout=None):
         util.logger.debug("Fetching %s..." % url)
-        page = urlopen(url)
-        
+
+        kwargs = dict(url=url)
+        if timeout and sys.version_info > (2,6,0): kwargs['timeout'] = timeout
+        page = urlopen(**kwargs)
+
         dispatch = getattr(self, 'parse_' + self.output_format)
         return dispatch(page, exactly_one)
 

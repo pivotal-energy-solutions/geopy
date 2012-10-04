@@ -29,7 +29,7 @@ class Yahoo(Geocoder):
             warn('geopy.geocoders.yahoo.Yahoo: The `output_format` parameter is deprecated '+
                  'and now ignored. JSON will be used internally.', DeprecationWarning)
 
-    def geocode(self, string, exactly_one=True):
+    def geocode(self, string, exactly_one=True, timeout=None):
 
         self.search_string = string
         params = {'location': self.format_string % self.search_string,
@@ -39,10 +39,14 @@ class Yahoo(Geocoder):
         url = self.BASE_URL % urlencode(params)
         self.url = url
         util.logger.debug("Fetching %s..." % self.url)
-        return self.geocode_url(url, exactly_one)
+        return self.geocode_url(url, exactly_one, timeout=timeout)
 
-    def geocode_url(self, url, exactly_one=True):
-        page = urlopen(url)
+    def geocode_url(self, url, exactly_one=True, timeout=None):
+
+        kwargs = dict(url=url)
+        if timeout and sys.version_info > (2,6,0): kwargs['timeout'] = timeout
+        page = urlopen(**kwargs)
+
         return self.parse_json(page, exactly_one)
 
     def _parse_result(self, place):

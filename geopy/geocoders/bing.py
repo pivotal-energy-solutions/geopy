@@ -1,3 +1,5 @@
+import sys
+
 try:
     import json
 except ImportError:
@@ -37,7 +39,8 @@ class Bing(Geocoder):
         self.include_neighborhood = False
         self.url = "http://dev.virtualearth.net/REST/v1/Locations?%s"
 
-    def geocode(self, string, exactly_one=True, region=None, include_neighborhood=False):
+    def geocode(self, string, exactly_one=True, region=None, include_neighborhood=False,
+                timeout=None):
 
         self.search_string = string
         params = {'query': self.format_string % self.search_string,
@@ -47,11 +50,14 @@ class Bing(Geocoder):
             params['countryRegion'] = region
         if include_neighborhood: params['inclnb'] = 1
         self.url = self.url % urlencode(params)
-        return self.geocode_url(self.url, exactly_one)
+        return self.geocode_url(self.url, exactly_one, timeout=timeout)
 
-    def geocode_url(self, url, exactly_one=True):
+    def geocode_url(self, url, exactly_one=True, timeout=None):
         logger.debug("Fetching %s..." % url)
-        page = urlopen(url)
+
+        kwargs = dict(url=url)
+        if timeout and sys.version_info > (2,6,0): kwargs['timeout'] = timeout
+        page = urlopen(**kwargs)
 
         return self.parse_json(page, exactly_one)
 

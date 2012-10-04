@@ -73,17 +73,20 @@ class SemanticMediaWiki(Geocoder):
     def get_thing_label(self, thing):
         return util.get_first_text(thing, 'rdfs:label')
     
-    def geocode_url(self, url, attempted=None):
+    def geocode_url(self, url, attempted=None, timeout=None):
         if attempted is None:
             attempted = set()
 
         util.logger.debug("Fetching %s..." % url)
-        page = urlopen(url)
+
+        kwargs = dict(url=url)
+        if timeout and sys.version_info > (2,6,0): kwargs['timeout'] = timeout
+        page = urlopen(**kwargs)
         soup = BeautifulSoup(page)
 
-        rdf_url = self.parse_rdf_link(soup)
-        util.logger.debug("Fetching %s..." % rdf_url)
-        page = urlopen(rdf_url)
+        kwargs['url'] = self.parse_rdf_link(soup)
+        util.logger.debug("Fetching %s..." % kwargs['url'])
+        page = urlopen(**kwargs)
 
         things, thing = self.parse_rdf(page)
         name = self.get_label(thing)

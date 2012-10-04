@@ -1,6 +1,7 @@
 import getpass
 from urllib import urlencode
 from urllib2 import urlopen
+import sys
 from geopy.geocoders.base import Geocoder
 from geopy import util
 import csv
@@ -28,14 +29,15 @@ class GeocoderDotUS(Geocoder):
         
         return 'http://%sgeocoder.us/%s' % (auth, resource)
     
-    def geocode(self, query, exactly_one=True):
+    def geocode(self, query, exactly_one=True, timeout=None):
         query_str = self.format_string % query
-        
-        page = urlopen("%s?%s" % (
-            self.get_url(),
-            urlencode({'address':query_str})
-        ))
-        
+
+        kwargs = dict(url="%s?%s" % (self.get_url(), urlencode({'address':query_str})))
+        util.logger.debug("Fetching %s..." % kwargs['url'])
+
+        if timeout and sys.version_info > (2,6,0): kwargs['timeout'] = timeout
+        page = urlopen(**kwargs)
+
         reader = csv.reader(page)
         
         places = [r for r in reader]

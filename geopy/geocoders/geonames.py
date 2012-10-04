@@ -1,6 +1,7 @@
 import xml.dom.minidom
 from urllib import urlencode
 from urllib2 import urlopen
+import sys
 from geopy import util
 
 try:
@@ -27,7 +28,7 @@ class GeoNames(Geocoder):
         self.country_bias = country_bias
         self.url = "http://ws.geonames.org/searchJSON?%s"
     
-    def geocode(self, string, exactly_one=True):
+    def geocode(self, string, exactly_one=True, timeout=None):
         params = {
             'q': string
         }
@@ -35,10 +36,14 @@ class GeoNames(Geocoder):
             params['countryBias'] = self.country_bias
         
         url = self.url % urlencode(params)
-        return self.geocode_url(url, exactly_one)
+        return self.geocode_url(url, exactly_one, timeout=None)
     
-    def geocode_url(self, url, exactly_one=True):
-        page = urlopen(url)
+    def geocode_url(self, url, exactly_one=True, timeout=None):
+
+        kwargs = dict(url=url)
+        if timeout and sys.version_info > (2,6,0): kwargs['timeout'] = timeout
+        page = urlopen(**kwargs)
+
         return self.parse_json(page, exactly_one)
 
     def _parse_result(self, place):

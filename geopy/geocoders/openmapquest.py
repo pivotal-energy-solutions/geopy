@@ -1,3 +1,5 @@
+import sys
+
 try:
     import json
 except ImportError:
@@ -29,7 +31,7 @@ class OpenMapQuest(Geocoder):
         self.format_string = format_string
         self.url = "http://open.mapquestapi.com/nominatim/v1/search?format=json&%s"
 
-    def geocode(self, string, exactly_one=True):
+    def geocode(self, string, exactly_one=True, timeout=None):
 
         self.search_string = string
         params = {
@@ -39,7 +41,10 @@ class OpenMapQuest(Geocoder):
         }
         self.url = self.url % urlencode(params)
         logger.debug("Fetching %s..." % self.url)
-        page = urlopen(self.url)
+
+        kwargs = dict(url=self.url)
+        if timeout and sys.version_info > (2,6,0): kwargs['timeout'] = timeout
+        page = urlopen(**kwargs)
 
         return self.parse_json(page, exactly_one)
 

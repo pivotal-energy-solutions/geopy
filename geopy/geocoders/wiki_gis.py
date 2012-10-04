@@ -2,6 +2,7 @@ from urllib import urlencode
 from urllib2 import urlopen
 import xml
 from xml.parsers.expat import ExpatError
+import sys
 
 from geopy.geocoders.base import Geocoder,GeocoderError,GeocoderResultError
 from geopy import Point, Location, util
@@ -30,14 +31,18 @@ class MediaWiki(Geocoder):
         """Do the WikiMedia dance: replace spaces with underscores."""
         return string.replace(' ', '_')
 
-    def geocode(self, string):
+    def geocode(self, string, timeout=None):
         wiki_string = self.transform_string(string)
         url = self.format_url % wiki_string
-        return self.geocode_url(url)
+        return self.geocode_url(url, timeout=timeout)
 
-    def geocode_url(self, url):
+    def geocode_url(self, url, timeout=None):
         util.logger.debug("Fetching %s..." % url)
-        page = urlopen(url)
+
+        kwargs = dict(url=url)
+        if timeout and sys.version_info > (2,6,0): kwargs['timeout'] = timeout
+        page = urlopen(**kwargs)
+
         return self._parse_result(page)
 
     def _parse_result(self, page):
