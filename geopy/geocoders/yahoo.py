@@ -2,6 +2,7 @@
 Wrapper to the Yahoo's new PlaceFinder API. (doc says that the API RELEASE 1.0 (22 JUNE 2010))
 """
 import xml.dom.minidom
+import sys
 from geopy import util
 from geopy import Point
 from urllib import urlencode
