@@ -77,7 +77,7 @@ class GeoNames(Geocoder):
             return None
         
         if exactly_one and len(places) != 1:
-            raise ValueError("Didn't find exactly one code! " \
+            raise ValueError("Didn't find exactly one result! " \
                              "(Found %d.)" % len(places))
 
         if exactly_one:

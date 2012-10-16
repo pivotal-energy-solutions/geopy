@@ -67,8 +67,8 @@ class OpenMapQuest(Geocoder):
         resources = json.loads(page)
 
         if exactly_one and len(resources) != 1:
-            raise ValueError(
-                "Didn't find exactly one placemark! (Found %d)" % len(resources))
+            raise ValueError("Didn't find exactly one result! " \
+                             "(Found %d.)" % len(resources))
 
         if exactly_one and len(resources) == 1:
             return self._parse_result(resources[0])

@@ -74,7 +74,7 @@ class Yahoo(Geocoder):
         if not results:
             raise ValueError("No results found")
         elif exactly_one and len(results) != 1:
-            raise ValueError("Didn't find exactly one placemark! " \
+            raise ValueError("Didn't find exactly one result! " \
                              "(Found %d.)" % len(results))
 
         if exactly_one:
