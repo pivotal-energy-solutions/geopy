@@ -8,7 +8,7 @@ except ImportError:
     except ImportError:
         from django.utils import simplejson as json
 
-from urllib import urlencode
+from django.utils.http import urlencode
 from urllib2 import urlopen
 
 from geopy.geocoders.base import Geocoder
@@ -33,7 +33,7 @@ class Bing(Geocoder):
             from warnings import warn
             warn('geopy.geocoders.bing.Bing: The `output_format` parameter is deprecated '+
                  'and ignored.', DeprecationWarning)
-        
+
         self.api_key = api_key
         self.format_string = format_string
         self.include_neighborhood = False
