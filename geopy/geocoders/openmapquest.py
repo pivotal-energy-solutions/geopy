@@ -8,7 +8,11 @@ except ImportError:
     except ImportError:
         from django.utils import simplejson as json
 
-from urllib import urlencode
+try:
+    from django.utils.http import urlencode
+except ImportError:
+    from urllib import urlencode
+
 from urllib2 import urlopen
 
 from geopy.geocoders.base import Geocoder

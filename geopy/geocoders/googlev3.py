@@ -9,8 +9,7 @@ geocoder classes.
 import base64
 import hashlib
 import hmac
-#from urllib import urlencode
-from django.utils.http import urlencode
+
 from urllib2 import urlopen
 import sys
 
@@ -21,6 +20,11 @@ except ImportError:
         import simplejson as json
     except ImportError:
         from django.utils import simplejson as json
+
+try:
+    from django.utils.http import urlencode
+except ImportError:
+    from urllib import urlencode
 
 from geopy.geocoders.base import Geocoder, GeocoderResultError
 from geopy import util

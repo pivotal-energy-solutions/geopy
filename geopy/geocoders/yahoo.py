@@ -5,7 +5,6 @@ import xml.dom.minidom
 import sys
 from geopy import util
 from geopy import Point
-from urllib import urlencode
 from urllib2 import urlopen
 from geopy.geocoders.base import Geocoder
 try:
@@ -16,6 +15,11 @@ except ImportError:
     except ImportError:
         from django.utils import simplejson as json
 
+try:
+    from django.utils.http import urlencode
+except ImportError:
+    from urllib import urlencode
+
 
 class Yahoo(Geocoder):
 
@@ -24,7 +28,7 @@ class Yahoo(Geocoder):
     def __init__(self, app_id, format_string='%s', output_format=None):
         self.app_id = app_id
         self.format_string = format_string
-        
+
         if output_format != None:
             from warnings import warn
             warn('geopy.geocoders.yahoo.Yahoo: The `output_format` parameter is deprecated '+
