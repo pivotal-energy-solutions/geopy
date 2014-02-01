@@ -35,7 +35,7 @@ class GoogleV3(Geocoder):
     '''Geocoder using the Google Maps v3 API.'''
 
     def __init__(self, domain='maps.googleapis.com', protocol='http',
-                 client_id=None, secret_key=None, api_key=None):
+                 client_id=None, secret_key=None):
         '''Initialize a customized Google geocoder.
 
         API authentication is only required for Google Maps Premier customers.
@@ -58,8 +58,6 @@ class GoogleV3(Geocoder):
             raise ValueError, 'Must provide secret_key with client_id.'
         if secret_key and not client_id:
             raise ValueError, 'Must provide client_id with secret_key.'
-        if not secret_key and not client_id and not api_key:
-            raise ValueError, 'Must provide at least an api_key'
 
         self.domain = domain.strip('/')
         self.protocol = protocol
@@ -71,7 +69,6 @@ class GoogleV3(Geocoder):
             self.secret_key = secret_key
             self.premier = True
         else:
-            self.api_key = api_key
             self.premier = False
 
     def get_signed_url(self, params):
@@ -90,8 +87,6 @@ class GoogleV3(Geocoder):
 
     def get_url(self, params):
         '''Returns a standard geocoding api url.'''
-        params['key']=self.api_key
-        params['sensor'] = params.get('sensor', False)
         return 'http://%(domain)s/maps/api/geocode/json?%(params)s' % (
             {'domain': self.domain, 'params': urlencode(params)})
 
