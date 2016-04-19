@@ -5,10 +5,13 @@ from geopy.location import Location
 from geopy import util
 
 try:
-    from BeautifulSoup import BeautifulSoup
+    from bs4 import BeautifulSoup
 except ImportError:
-    util.logger.warn("BeautifulSoup was not found. " \
-          "The SemanticMediaWiki geocoder will not work.")
+    try:
+        from BeautifulSoup import BeautifulSoup
+    except ImportError:
+        util.logger.warn("BeautifulSoup was not found. " \
+              "The SemanticMediaWiki geocoder will not work.")
 
 try:
     set
