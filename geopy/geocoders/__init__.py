@@ -59,7 +59,7 @@ class Place(object):
         else:
             self.errors.append("County not given")
         if self.subdivision_id:
-            from apps.subdivision.models import Subdivision
+            from axis.subdivision.models import Subdivision
             try:
                 subdivision = Subdivision.objects.get(id=self.subdivision_id)
             except ObjectDoesNotExist:
