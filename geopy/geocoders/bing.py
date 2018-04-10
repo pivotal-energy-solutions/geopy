@@ -46,13 +46,11 @@ class Bing(Geocoder):
                 timeout=None):
 
         self.search_string = string
-        params = {'query': self.format_string % self.search_string,
-                  'key': self.api_key
-                  }
+        params = {'query': self.format_string % self.search_string,}
         if region:
             params['countryRegion'] = region
         if include_neighborhood: params['inclnb'] = 1
-        self.url = self.url % urlencode(params)
+        self.url = self.url % urlencode(params) + "&key={}".format(self.api_key)
         return self.geocode_url(self.url, exactly_one, timeout=timeout)
 
     def geocode_url(self, url, exactly_one=True, timeout=None):
