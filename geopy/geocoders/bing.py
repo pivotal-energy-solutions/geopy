@@ -12,7 +12,7 @@ try:
 except ImportError:
     from urllib import urlencode
 
-from urllib2 import urlopen
+from urllib2 import urlopen, HTTPError
 
 from geopy.geocoders.base import Geocoder
 from geopy.util import logger, decode_page, join_filter
@@ -46,11 +46,13 @@ class Bing(Geocoder):
                 timeout=None):
 
         self.search_string = string
-        params = {'query': self.format_string % self.search_string,}
+        params = {'query': self.format_string % self.search_string,
+                  'key': self.api_key[1:-1] if self.api_key[0] in ["'", '"'] else self.api_key
+                  }
         if region:
             params['countryRegion'] = region
         if include_neighborhood: params['inclnb'] = 1
-        self.url = self.url % urlencode(params) + "&key={}".format(self.api_key)
+        self.url = self.url % urlencode(params)
         return self.geocode_url(self.url, exactly_one, timeout=timeout)
 
     def geocode_url(self, url, exactly_one=True, timeout=None):
@@ -58,7 +60,11 @@ class Bing(Geocoder):
 
         kwargs = dict(url=url)
         if timeout and sys.version_info > (2,6,0): kwargs['timeout'] = timeout
-        page = urlopen(**kwargs)
+        try:
+            page = urlopen(**kwargs)
+        except HTTPError, e:
+            print e.fp.read()
+            raise
 
         return self.parse_json(page, exactly_one)
 

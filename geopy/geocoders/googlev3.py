@@ -10,7 +10,7 @@ import base64
 import hashlib
 import hmac
 
-from urllib2 import urlopen
+from urllib2 import urlopen, HTTPError
 import sys
 
 try:
@@ -73,7 +73,7 @@ class GoogleV3(Geocoder):
 
     def get_signed_url(self, params):
         '''Returns a Premier account signed url.'''
-        params['client'] = self.client_id
+        params['client'] = self.client_id[1:-1] if self.client_id[0] in ["'", '"'] else self.client_id
         url_params = {'protocol': self.protocol, 'domain': self.domain,
                       'params': urlencode(params)}
         secret = base64.urlsafe_b64decode(self.secret_key)
@@ -96,7 +96,11 @@ class GoogleV3(Geocoder):
 
         kwargs = dict(url=url)
         if timeout and sys.version_info > (2,6,0): kwargs['timeout'] = timeout
-        page = urlopen(**kwargs)
+        try:
+            page = urlopen(**kwargs)
+        except HTTPError, e:
+            print e.fp.read()
+            raise
 
         return self.parse_json(page, exactly_one)
 
