@@ -2,12 +2,12 @@ from geopy.point import Point
 from geopy.location import Location
 from geopy import geocoders
 
-VERSION = (0, 96, 0, "pre")
+from __future__ import unicode_literals
 
-def get_version():
-    version = '%s.%s' % (VERSION[0], VERSION[1])
-    if VERSION[2]:
-        version = '%s.%s' % (version, VERSION[2])
-    if VERSION[3:]:
-        version = '%s.%s' % (version, VERSION[3])
-    return version
+__name__ = 'geopy'
+__author__ = 'Brian Beck'
+__version_info__ = (1, 0, '0rc1')
+__version__ = '.'.join(map(str, __version_info__))
+__date__ = '2014/07/22 4:47:00 PM'
+__credits__ = ['Brian Beck', 'Steven Klass', 'Tim Valenta']
+__license__ = 'See the file LICENSE.txt for licensing information.'
