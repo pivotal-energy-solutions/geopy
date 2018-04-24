@@ -16,7 +16,7 @@ here = path.abspath(path.dirname(__file__))
 from geopy import __version__, __name__, __author__
 
 name = 'pivotal_' + __name__
-base_url = 'https://github.com/pivotal-energy-solutions/django_zendesk'
+base_url = 'https://github.com/pivotal-energy-solutions/geopy'
 
 # Get the long description from the README file
 with open(path.join(here, 'README.md'), encoding='utf-8') as f:
