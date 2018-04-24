@@ -80,6 +80,8 @@ setup(
     # https://packaging.python.org/specifications/core-metadata/#home-page-optional
     url=base_url,  # Optional
 
+    download_url='{0}/archive/{1}.tar.gz'.format(base_url, __version__),
+
     # This should be your name or the name of the organization which owns the
     # project.
     author=__author__,  # Optional
